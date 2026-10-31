@@ -1,0 +1,560 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Eitan Farchi</title>
+<meta name="description" content="Eitan Farchi: software quality, testing, and the validation of AI systems. Every paper is a preprint, open for critique, and revised in public.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a single reading column (~68ch) with a wide left margin that carries an arXiv-style
+   vertical stamp; sections read like a working paper — preprints first, ledger of critique, then the archive. */
+:root{
+  --paper:#F5F6F3;      /* faintly green-grey paper */
+  --sheet:#FFFFFF;
+  --ink:#18201E;
+  --ink-2:#4A5552;
+  --ink-3:#7B8683;
+  --rule:#D9DEDA;
+  --accent:#1D5C63;     /* deep teal: the marginal-note pen */
+  --accent-ink:#FFFFFF;
+  --mark:#F7DE7A;       /* reviewer's highlighter */
+  --open:#2F7A4B;       /* status: open for critique */
+  --open-bg:#E3F1E7;
+  --chip:#ECEFEC;
+  --display:"Spectral", "Iowan Old Style", Georgia, serif;
+  --body:"IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#111615; --sheet:#171D1C; --ink:#E4EAE7; --ink-2:#AAB5B1; --ink-3:#7D8A86; --rule:#2A3331;
+    --accent:#7CC3C9; --accent-ink:#0E1716; --mark:#6B5A12; --open:#7FD39C; --open-bg:#16301F; --chip:#212927;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#111615; --sheet:#171D1C; --ink:#E4EAE7; --ink-2:#AAB5B1; --ink-3:#7D8A86; --rule:#2A3331;
+  --accent:#7CC3C9; --accent-ink:#0E1716; --mark:#6B5A12; --open:#7FD39C; --open-bg:#16301F; --chip:#212927;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.6;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+a{color:var(--accent);text-decoration-thickness:1px;text-underline-offset:3px}
+a:hover{text-decoration-thickness:2px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:2px}
+h1,h2,h3{font-family:var(--display);font-weight:500;text-wrap:balance;line-height:1.2;margin:0}
+p{margin:0}
+.wrap{max-width:1040px;margin:0 auto;display:grid;grid-template-columns:72px minmax(0,1fr);gap:0 40px}
+.margin{position:relative}
+.stamp{position:sticky;top:120px;writing-mode:vertical-rl;transform:rotate(180deg);font-family:var(--mono);
+  font-size:13px;letter-spacing:.04em;color:var(--ink-3);white-space:nowrap;padding-block:24px}
+.stamp b{color:var(--ink-2);font-weight:500}
+main{min-width:0;padding-block:28px 64px}
+.col{max-width:68ch}
+
+/* top bar */
+.top{display:flex;flex-wrap:wrap;gap:8px 20px;align-items:baseline;justify-content:space-between;
+  border-bottom:1px solid var(--rule);padding-bottom:14px}
+.top .who{font-family:var(--mono);font-size:13px;color:var(--ink-2);letter-spacing:.02em}
+.top nav{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:14px}
+.top nav a{color:var(--ink-2);text-decoration:none}
+.top nav a:hover{color:var(--accent)}
+
+/* hero */
+.hero{padding-block:56px 40px;display:grid;gap:22px}
+.name{font-family:var(--display);font-size:clamp(40px,6vw,64px);font-weight:500;letter-spacing:-.01em;line-height:1.05}
+.role{color:var(--ink-2);font-size:16px}
+.thesis{font-family:var(--display);font-size:clamp(22px,2.6vw,28px);line-height:1.4;font-weight:400;max-width:30em}
+.thesis mark{background:linear-gradient(transparent 55%, var(--mark) 55%, var(--mark) 92%, transparent 92%);color:inherit;padding:0 2px}
+.lede{color:var(--ink-2);max-width:62ch}
+.links{display:flex;flex-wrap:wrap;gap:8px}
+.links a{font-family:var(--mono);font-size:13px;text-decoration:none;border:1px solid var(--rule);background:var(--sheet);
+  color:var(--ink);padding:6px 11px;border-radius:3px}
+.links a:hover{border-color:var(--accent);color:var(--accent)}
+
+/* section scaffolding */
+section{padding-block:44px;border-top:1px solid var(--rule)}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+section h2{font-size:clamp(26px,3vw,32px);margin-bottom:14px}
+.sub{color:var(--ink-2);max-width:62ch;margin-bottom:26px}
+
+/* charter */
+.charter{display:grid;gap:0;border-top:1px solid var(--rule)}
+.pledge{display:grid;grid-template-columns:minmax(0,13em) minmax(0,1fr);gap:6px 28px;padding-block:18px;border-bottom:1px solid var(--rule)}
+.pledge h3{font-size:20px}
+.pledge p{color:var(--ink-2)}
+.quote{margin:30px 0 0;padding:4px 0 4px 20px;border-left:2px solid var(--mark);font-family:var(--display);font-style:italic;font-size:19px;color:var(--ink-2);max-width:60ch}
+.quote cite{display:block;font-family:var(--body);font-style:normal;font-size:13px;color:var(--ink-3);margin-top:8px}
+
+/* open preprints */
+.preprints{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,290px),1fr));gap:14px}
+.pp{background:var(--sheet);border:1px solid var(--rule);border-radius:4px;padding:16px 16px 14px;display:grid;gap:10px;align-content:start;grid-template-rows:auto 1fr auto}
+.pp-head{display:flex;justify-content:space-between;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--ink-3)}
+.status{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:11.5px;letter-spacing:.02em;color:var(--open);background:var(--open-bg);padding:2px 8px;border-radius:20px;white-space:nowrap}
+.status::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.pp h3{font-size:18px;line-height:1.3}
+.pp h3 a{color:var(--ink);text-decoration:none}
+.pp h3 a:hover{color:var(--accent)}
+.pp-foot{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px;padding-top:10px;border-top:1px dashed var(--rule)}
+.pp-foot .tally{font-size:12.5px;color:var(--ink-3)}
+.btn{font:500 13px/1 var(--body);border:1px solid var(--accent);background:transparent;color:var(--accent);padding:7px 11px;border-radius:3px;cursor:pointer}
+.btn:hover{background:var(--accent);color:var(--accent-ink)}
+.btn.solid{background:var(--accent);color:var(--accent-ink)}
+.prep{margin-top:22px;display:grid;gap:8px;color:var(--ink-2);font-size:15px}
+.prep b{color:var(--ink);font-weight:500}
+
+/* threads */
+.threads{display:grid;gap:0;border-top:1px solid var(--rule)}
+.thread{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 20px;padding-block:20px;border-bottom:1px solid var(--rule)}
+.thread h3{font-size:21px}
+.thread .span{font-family:var(--mono);font-size:12.5px;color:var(--ink-3);white-space:nowrap;align-self:baseline}
+.thread p{grid-column:1/-1;color:var(--ink-2);max-width:66ch}
+.thread .key{grid-column:1/-1;font-size:14px;margin-top:6px;display:flex;flex-wrap:wrap;gap:4px 14px}
+.thread .key span{color:var(--ink-3)}
+.thread .ongoing{grid-column:1/-1;font-size:14px;color:var(--ink)}
+.thread .ongoing b{font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--open);font-weight:500;margin-right:6px}
+
+/* ledger */
+.tabs{display:flex;flex-wrap:wrap;gap:0;border-bottom:1px solid var(--rule);margin-bottom:0}
+.tab{font:500 14px var(--body);background:none;border:0;border-bottom:2px solid transparent;color:var(--ink-2);padding:10px 14px 9px;cursor:pointer;margin-bottom:-1px}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+.panel{background:var(--sheet);border:1px solid var(--rule);border-top:0;border-radius:0 0 4px 4px;padding:22px}
+.ledger-table{width:100%;border-collapse:collapse;font-size:14px}
+.ledger-wrap{overflow-x:auto}
+.ledger-table th{font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);font-weight:500;text-align:left;padding:0 12px 8px 0;border-bottom:1px solid var(--rule);white-space:nowrap}
+.ledger-table td.empty{padding:22px 0 4px;color:var(--ink-2)}
+.empty b{color:var(--ink);font-weight:500;display:block;margin-bottom:4px;font-family:var(--display);font-size:18px}
+
+/* archive */
+.controls{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;margin-bottom:18px}
+.search{flex:1 1 220px;min-width:0;font:15px var(--body);padding:9px 12px;border:1px solid var(--rule);border-radius:3px;background:var(--sheet);color:var(--ink)}
+.search::placeholder{color:var(--ink-3)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:500 13px var(--body);border:1px solid var(--rule);background:var(--sheet);color:var(--ink-2);padding:5px 10px;border-radius:20px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.chip .n{font-family:var(--mono);font-size:11.5px;opacity:.7;margin-left:4px}
+.opts{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13.5px;color:var(--ink-2);align-items:center}
+.opts label{display:inline-flex;gap:6px;align-items:center;cursor:pointer}
+.opts select{font:13.5px var(--body);background:var(--sheet);color:var(--ink);border:1px solid var(--rule);border-radius:3px;padding:4px 6px}
+.count{font-family:var(--mono);font-size:12.5px;color:var(--ink-3);margin-bottom:6px}
+.papers{list-style:none;margin:0;padding:0;border-top:1px solid var(--rule)}
+.paper{display:grid;grid-template-columns:3.4em minmax(0,1fr) auto;gap:2px 14px;padding-block:13px;border-bottom:1px solid var(--rule)}
+.paper .yr{font-family:var(--mono);font-size:13px;color:var(--ink-3);font-variant-numeric:tabular-nums;padding-top:2px}
+.paper .t{font-family:var(--display);font-size:17.5px;line-height:1.35}
+.paper .t a{color:var(--ink);text-decoration:none}
+.paper .t a:hover{color:var(--accent);text-decoration:underline}
+.paper .au{font-size:13.5px;color:var(--ink-2)}
+.paper .au b{color:var(--ink);font-weight:600}
+.paper .meta{font-size:12.5px;color:var(--ink-3);display:flex;flex-wrap:wrap;gap:2px 12px;margin-top:2px}
+.paper .meta a{font-family:var(--mono)}
+.paper .side{display:grid;justify-items:end;align-content:start;gap:6px}
+.cites{font-family:var(--mono);font-size:12.5px;color:var(--ink-2);font-variant-numeric:tabular-nums;white-space:nowrap}
+.linkbtn{font:500 12.5px var(--body);background:none;border:0;color:var(--accent);cursor:pointer;padding:0;text-decoration:underline;text-underline-offset:3px}
+.hide-venue .venue{display:none}
+.more{margin-top:16px}
+
+/* about */
+.about{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:32px}
+.about p+p{margin-top:12px}
+.about .bio{color:var(--ink-2)}
+.facts{display:grid;gap:18px;align-content:start}
+.fact h3{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);font-weight:500;margin-bottom:6px}
+.fact ul{list-style:none;margin:0;padding:0;display:grid;gap:4px;font-size:14.5px}
+.fact li span{color:var(--ink-3);font-family:var(--mono);font-size:12.5px;margin-left:6px}
+.book{display:grid;grid-template-columns:auto minmax(0,1fr);gap:18px;align-items:start;background:var(--sheet);border:1px solid var(--rule);border-radius:4px;padding:18px;margin-top:22px}
+.spine{width:46px;height:68px;background:var(--accent);border-radius:2px;position:relative}
+.spine::after{content:"";position:absolute;left:6px;right:6px;top:10px;height:2px;background:var(--mark)}
+.book h3{font-size:18px}
+.book p{font-size:14px;color:var(--ink-2)}
+
+/* contact */
+.contact{display:grid;gap:14px}
+.addr{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.addr code{font-family:var(--mono);font-size:15px;background:var(--sheet);border:1px solid var(--rule);padding:7px 12px;border-radius:3px;user-select:all}
+
+footer{border-top:1px solid var(--rule);padding-block:24px 40px;font-size:13px;color:var(--ink-3);display:grid;gap:6px}
+footer .counted{font-family:var(--mono);font-size:12.5px}
+
+/* critique dialog */
+dialog{border:1px solid var(--rule);border-radius:6px;background:var(--sheet);color:var(--ink);padding:0;width:min(640px,calc(100vw - 32px));max-height:calc(100vh - 48px)}
+dialog::backdrop{background:rgba(10,16,15,.45)}
+.dlg{padding:22px;display:grid;gap:14px}
+.dlg h2{font-size:22px}
+.dlg .ptitle{font-family:var(--display);font-style:italic;color:var(--ink-2)}
+.kinds{display:flex;flex-wrap:wrap;gap:6px}
+.dlg textarea{width:100%;min-height:240px;font:13px/1.55 var(--mono);color:var(--ink);background:var(--paper);border:1px solid var(--rule);border-radius:3px;padding:12px;resize:vertical}
+.dlg .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between}
+.dlg .hint{font-size:13px;color:var(--ink-3)}
+.toast{font-size:13px;color:var(--open);min-height:1.2em}
+
+@media (max-width:760px){
+  .wrap{grid-template-columns:minmax(0,1fr)}
+  .margin{display:none}
+  .pledge{grid-template-columns:minmax(0,1fr)}
+  .about{grid-template-columns:minmax(0,1fr)}
+  .paper{grid-template-columns:minmax(0,1fr) auto}
+  .paper .yr{grid-column:1/-1;padding:0}
+  .hero{padding-block:36px 28px}
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <aside class="margin" aria-hidden="true">
+    <div class="stamp"><b>Farchi, E.</b> &nbsp;·&nbsp; preprint-first &nbsp;·&nbsp; open for critique &nbsp;·&nbsp; revised in public &nbsp;·&nbsp; draft of 31 Oct 2026</div>
+  </aside>
+
+  <main>
+    <header class="top">
+      <span class="who">Eitan Farchi · IBM Research – Haifa</span>
+      <nav aria-label="Sections">
+        <a href="#how-i-publish">How I publish</a>
+        <a href="#open">Open for critique</a>
+        <a href="#threads">Research</a>
+        <a href="#ledger">Ledger</a>
+        <a href="#papers">All papers</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </header>
+
+    <div class="hero">
+      <h1 class="name">Eitan Farchi</h1>
+      <p class="role">Distinguished Engineer, IBM Research – Haifa &nbsp;·&nbsp; Lecturer, Testing of AI Systems, Open University of Israel &nbsp;·&nbsp; Ph.D. Mathematics, University of Haifa</p>
+      <p class="thesis">My research asks one question: <mark>how do we establish confidence in software whose behavior is too large, too nondeterministic, or too opaque to inspect directly?</mark></p>
+      <p class="lede">The method has stayed the same from concurrent programs to large language models. Build an explicit model of intended behavior, derive a coverage or validity criterion from it, generate tests that stress its boundaries, and then validate the measuring instrument itself. I apply the same habit to my own papers: they are posted openly, tested by readers, and corrected in public.</p>
+      <div class="links">
+        <a href="https://arxiv.org/search/?searchtype=author&amp;query=Farchi%2C+Eitan" target="_blank" rel="noopener">arXiv</a>
+        <a href="https://scholar.google.com/citations?user=QLk2CiAAAAAJ" target="_blank" rel="noopener">Google Scholar</a>
+        <a href="https://orcid.org/0000-0002-3021-1488" target="_blank" rel="noopener">ORCID</a>
+        <a href="https://dblp.org/search?q=Eitan+Farchi" target="_blank" rel="noopener">DBLP</a>
+        <a href="#contact">Email</a>
+      </div>
+    </div>
+
+    <section id="how-i-publish">
+      <div class="eyebrow">How I publish</div>
+      <h2>A home page instead of a gatekeeper</h2>
+      <p class="sub">I follow the model Larry Wasserman set out in <a href="https://www.stat.cmu.edu/~brian/zach-00/765-2019/764-2016/week05/refereeing/Larry-Abolish-the-Peer-Review.pdf" target="_blank" rel="noopener"><i>A World Without Referees</i></a>: research is disseminated openly, readers judge it for themselves, and quality control happens through public critique rather than private approval. This page is where that happens for my work.</p>
+      <div class="charter">
+        <div class="pledge"><h3>Preprint first</h3><p>Every paper goes on arXiv as soon as it is written, before and regardless of any venue decision. When a new paper is posted, I announce it here and to colleagues working on the same problem.</p></div>
+        <div class="pledge"><h3>Read it, then judge it</h3><p>Each paper below links to the full text. Venue names are listed for reference, and you can hide them. How often a paper has been used and cited tells you more than where it appeared.</p></div>
+        <div class="pledge"><h3>Critique is invited</h3><p>Every paper has a <em>Critique this paper</em> button. Send comments, objections, counter-examples, or a full review by email. I answer each one, and with your permission I post the exchange in the ledger below.</p></div>
+        <div class="pledge"><h3>Errors are fixed in the open</h3><p>When a reader finds a mistake, I thank them by name, post a revised version, and record the change in the errata log. Earlier versions stay available on arXiv.</p></div>
+        <div class="pledge"><h3>Reviewing is scholarship</h3><p>I write public reviews of other people's papers and list them here. Reviews of my own work are listed alongside, including the critical ones.</p></div>
+      </div>
+      <blockquote class="quote">“If you rely on referees to filter papers for you then I think you are making a huge error.” <cite>Larry Wasserman, <i>A World Without Referees</i> (2012)</cite></blockquote>
+    </section>
+
+    <section id="open">
+      <div class="eyebrow">Open for critique</div>
+      <h2>Current preprints</h2>
+      <p class="sub">These are the papers I am actively working on. They are the most useful ones to read critically, because your comments can still change them.</p>
+      <div class="preprints" id="preprints"></div>
+      <div class="prep">
+        <p><b>In preparation.</b> Drafts will be posted on arXiv and listed here before submission. Ask for an early copy if you would like to comment now.</p>
+        <p>“Software Engineering in the Era of AI” &nbsp;·&nbsp; “Compliance Is an Architecture, Not a Behavior” &nbsp;·&nbsp; “A data valuation model for non-monetary exchanges” &nbsp;·&nbsp; a revised edition of <i>Theory and Practice of Quality Assurance for Machine Learning Systems</i></p>
+      </div>
+    </section>
+
+    <section id="threads">
+      <div class="eyebrow">Research</div>
+      <h2>Five threads, one method</h2>
+      <p class="sub">Each thread applies the same model, criterion, test, and validate loop to a harder class of system. Select a thread to filter the full paper list.</p>
+      <div class="threads" id="threadList"></div>
+    </section>
+
+    <section id="ledger">
+      <div class="eyebrow">The ledger</div>
+      <h2>Critiques, errata, and reviews</h2>
+      <p class="sub">The public record of how my papers have been tested by readers. Entries are added as they arrive, with the reader's permission.</p>
+      <div class="tabs" role="tablist" aria-label="Ledger">
+        <button class="tab" role="tab" id="tab-crit" aria-selected="true" aria-controls="pan-crit">Critiques received</button>
+        <button class="tab" role="tab" id="tab-err" aria-selected="false" aria-controls="pan-err">Errata &amp; revisions</button>
+        <button class="tab" role="tab" id="tab-rev" aria-selected="false" aria-controls="pan-rev">Reviews I've written</button>
+      </div>
+      <div class="panel" role="tabpanel" id="pan-crit" aria-labelledby="tab-crit">
+        <div class="ledger-wrap"><table class="ledger-table"><thead><tr><th>Date</th><th>Paper</th><th>Reader</th><th>Point raised</th><th>My response</th></tr></thead>
+        <tbody><tr><td class="empty" colspan="5"><b>No critiques posted yet.</b>Pick any paper on this page and press <em>Critique this paper</em>. The first one goes here.</td></tr></tbody></table></div>
+      </div>
+      <div class="panel" role="tabpanel" id="pan-err" aria-labelledby="tab-err" hidden>
+        <div class="ledger-wrap"><table class="ledger-table"><thead><tr><th>Date</th><th>Paper</th><th>Version</th><th>What changed</th><th>Credited to</th></tr></thead>
+        <tbody><tr><td class="empty" colspan="5"><b>No errata recorded yet.</b>Corrections found by readers will be logged here with the arXiv version that fixes them.</td></tr></tbody></table></div>
+      </div>
+      <div class="panel" role="tabpanel" id="pan-rev" aria-labelledby="tab-rev" hidden>
+        <div class="ledger-wrap"><table class="ledger-table"><thead><tr><th>Date</th><th>Paper reviewed</th><th>Authors</th><th>Review</th></tr></thead>
+        <tbody><tr><td class="empty" colspan="4"><b>Public reviews start here.</b>I will post signed reviews of recent papers on testing, ML quality, and LLM evaluation. Authors are welcome to reply, and replies are linked beside each review.</td></tr></tbody></table></div>
+      </div>
+    </section>
+
+    <section id="papers">
+      <div class="eyebrow">All papers</div>
+      <h2>The full record</h2>
+      <p class="sub">Every paper since 1994. Titles link to the free arXiv version where one exists, otherwise to the publisher. Citation counts are from Google Scholar.</p>
+      <div class="controls">
+        <input class="search" id="q" type="search" placeholder="Search titles and co-authors" aria-label="Search papers">
+        <div class="opts">
+          <label for="sort">Sort <select id="sort"><option value="year">Newest first</option><option value="cites">Most cited</option></select></label>
+          <label><input type="checkbox" id="arxivOnly"> Free full text only</label>
+          <label><input type="checkbox" id="hideVenue"> Hide venues</label>
+        </div>
+      </div>
+      <div class="chips" id="chips" style="margin-bottom:16px"></div>
+      <div class="count" id="count"></div>
+      <ul class="papers" id="paperList"></ul>
+      <div class="more"><button class="btn" id="moreBtn" hidden>Show all</button></div>
+    </section>
+
+    <section id="about">
+      <div class="eyebrow">About</div>
+      <h2>Biography</h2>
+      <div class="about">
+        <div class="bio">
+          <p>I have been at IBM Research – Haifa since 1992, and was appointed Distinguished Engineer in 2016 for leading the transformation of IBM's quality-assurance practices. My work combines research in software engineering and mathematics with hands-on experience across the whole development cycle.</p>
+          <p>I led the software testing project cluster, conceiving tools and methods for testing, analysis, and review and deploying them across many projects. A central contribution is Combinatorial Test Design, which uses mathematical optimization to cover a set of requirements and their interactions with far fewer tests, typically less than half. It underpins an IBM test-outsourcing and platform business. I also drove the shift-left strategy in firmware, created IBM's review-moderator certification program, and consulted for Western Digital from 2014 to 2022.</p>
+          <p>For the last several years my work has focused on testing and validating systems built with machine learning and, more recently, generative AI.</p>
+          <div class="book">
+            <div class="spine" aria-hidden="true"></div>
+            <div>
+              <h3><a href="https://link.springer.com/book/10.1007/978-3-031-70008-8" target="_blank" rel="noopener">Theory and Practice of Quality Assurance for Machine Learning Systems</a></h3>
+              <p>An experiment-driven approach. With S. Ackerman, G. Barash, O. Raz and O. Shehory. Springer, 2024. A revised edition is in progress, and comments on the current one will shape it.</p>
+            </div>
+          </div>
+        </div>
+        <div class="facts">
+          <div class="fact"><h3>Teaching</h3><ul>
+            <li>Testing of AI Systems <span>Open U. 2025–26</span></li>
+            <li>Logic for Verification &amp; Testing <span>Haifa 2009–12</span></li>
+            <li>Software Engineering <span>Haifa 2000–07</span></li>
+            <li>Concurrent &amp; Distributed Systems <span>Haifa 2000–07</span></li>
+            <li>Programming Language Semantics <span>Haifa 2000–07</span></li>
+          </ul></div>
+          <div class="fact"><h3>Community</h3><ul>
+            <li>Co-chair, AAAI Workshop on Engineering Dependable and Secure ML Systems <span>2018–20</span></li>
+            <li>Program chair, PADTAD workshop series <span>2003–11</span></li>
+            <li>Program chair, MUSEPAT <span>2013</span></li>
+            <li>Industrial Advisory Board, FP7 PROARTIS <span>2010–12</span></li>
+          </ul></div>
+          <div class="fact"><h3>Education</h3><ul>
+            <li>Ph.D. Mathematics, University of Haifa <span>1997</span></li>
+            <li>M.Sc. Mathematics, Hebrew University <span>1990</span></li>
+            <li>B.Sc. Math &amp; CS, Hebrew University <span>1987</span></li>
+          </ul></div>
+          <div class="fact"><h3>Industry</h3><ul>
+            <li>Inventor on 40+ US patents and applications</li>
+          </ul></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact">
+      <div class="eyebrow">Contact</div>
+      <h2>Write to me</h2>
+      <div class="contact">
+        <p class="sub" style="margin:0">Critiques, reviews, corrections, and collaboration ideas are all welcome. So are students looking for open problems in testing AI systems. Please mention the paper's arXiv number if you are writing about a specific paper.</p>
+        <div class="addr"><code id="email">farchi@il.ibm.com</code><button class="btn" id="copyEmail">Copy address</button><span class="toast" id="emailToast" aria-live="polite"></span></div>
+        <p style="font-size:14px;color:var(--ink-2)">To hear about new preprints, follow my <a href="https://arxiv.org/search/?searchtype=author&amp;query=Farchi%2C+Eitan" target="_blank" rel="noopener">arXiv listing</a> or email me with the subject “subscribe”.</p>
+      </div>
+    </section>
+
+    <footer>
+      <span class="counted">For those who count: 4,095 citations · h-index 30 · i10-index 83 (Google Scholar, June 2026).</span>
+      <span>Draft home page, last updated 31 October 2026.</span>
+    </footer>
+  </main>
+</div>
+
+<dialog id="dlg" aria-labelledby="dlgTitle">
+  <form method="dialog" class="dlg" id="dlgForm">
+    <h2 id="dlgTitle">Critique this paper</h2>
+    <p class="ptitle" id="dlgPaper"></p>
+    <div>
+      <div class="eyebrow" style="margin-bottom:6px">What kind of comment?</div>
+      <div class="kinds" id="kinds"></div>
+    </div>
+    <textarea id="dlgText" aria-label="Email text"></textarea>
+    <p class="hint">Edit the text above, then copy it into an email to <b>farchi@il.ibm.com</b>. The email button may not work in every browser.</p>
+    <div class="row">
+      <span class="toast" id="dlgToast" aria-live="polite"></span>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <a class="btn" id="dlgMail" href="#" target="_blank" rel="noopener" style="text-decoration:none">Open in email</a>
+        <button type="button" class="btn solid" id="dlgCopy">Copy text</button>
+        <button type="submit" class="btn" value="close">Close</button>
+      </div>
+    </div>
+  </form>
+</dialog>
+
+<script>
+const PAPERS = [{"t":"Enhancing Formal Software Specification with Artificial Intelligence","y":2026,"a":["A. A. Nassar","E. Farchi"],"v":"","r":null,"x":"2601.09745","d":null,"c":0,"th":"found"},{"t":"Combinatorial Test Design Model Creation using Large Language Models","y":2025,"a":["D. A. Furman","E. Farchi","M. E. Gildein","A. C. M. Hicks","R. T. Rawlins"],"v":"IEEE International Conference on Software Testing","r":"A","x":null,"d":"https://doi.org/10.1109/ICSTW64639.2025.10962528","c":0,"th":"ctd"},{"t":"Vintage Code, Modern Judges: Meta-Validation in Low Data Regimes","y":2025,"a":["O. N. Fandina","G. Amram","E. Farchi","et al."],"v":"40th IEEE/ACM International Conference on Automated Software Engineering, ASE 2025 - Workshops","r":"A*","x":"2510.27244","d":"https://doi.org/10.1109/ASEW67777.2025.00015","c":0,"th":"llm"},{"t":"Evaluating the Prompt Steerability of Large Language Models","y":2025,"a":["E. Miehling","M. Desmond","K. N. Ramamurthy","…","E. Farchi","et al."],"v":"Proceedings of the 2025 Conference of the Nations of the Americas Chapter of the Association for Computational Linguistics: Human Language Technologies, NAACL 2025 - Volume 1: Long Papers","r":"A","x":null,"d":"https://doi.org/10.18653/v1/2025.naacl-long.400","c":36,"th":"llm"},{"t":"Statistical multi-metric evaluation and visualization of LLM system predictive performance","y":2025,"a":["S. Ackerman","E. Farchi","O. Raz","A. Toledo"],"v":"","r":null,"x":"2501.18243","d":null,"c":0,"th":"llm"},{"t":"Black-Box Bug-Amplification for Multithreaded Software","y":2025,"a":["Y. Weiss","G. Amram","A. Elyasaf","E. Farchi","O. Margalit","G. Weiss"],"v":"","r":null,"x":"2507.21318","d":null,"c":0,"th":"conc"},{"t":"Automated Validation of LLM-based Evaluators for Software Engineering Artifacts","y":2025,"a":["O. N. Fandina","E. Farchi","S. Froimovich","et al."],"v":"","r":null,"x":"2508.02827","d":null,"c":0,"th":"llm"},{"t":"LaajMeter: A Framework for LaaJ Evaluation","y":2025,"a":["G. Amram","E. Farchi","S. Froimovich","R. Gal","A. Ziv"],"v":"","r":null,"x":"2508.10161","d":null,"c":0,"th":"llm"},{"t":"Technique to Baseline QE Artefact Generation Aligned to Quality Metrics","y":2025,"a":["E. Farchi","K. Nayak","P. G. Majumdar","S. Route"],"v":"","r":null,"x":"2511.15733","d":null,"c":0,"th":"llm"},{"t":"An Agent-Based Framework for the Automatic Validation of Mathematical Optimization Models","y":2025,"a":["A. Zadorojniy","S. Wasserkrug","E. Farchi"],"v":"","r":null,"x":"2511.16383","d":null,"c":0,"th":"llm"},{"t":"PACIFIC: a framework for generating benchmarks to check Precise Automatically Checked Instruction Following In Code","y":2025,"a":["I. Dreyfuss","A. A. Nassar","S. Ackerman","…","E. Farchi","et al."],"v":"","r":null,"x":"2512.10713","d":null,"c":0,"th":"llm"},{"t":"Beyond Blind Spots: Analytic Hints for Mitigating LLM-Based Evaluation Pitfalls","y":2025,"a":["O. N. Fandina","E. Farchi","S. Froimovich","et al."],"v":"","r":null,"x":"2512.16272","d":null,"c":0,"th":"llm"},{"t":"Exploring Straightforward Methods for Automatic Conversational Red-Teaming","y":2024,"a":["G. Kour","N. Zwerdling","M. Zalmanovici","A. Anaby-Tavor","O. N. Fandina","E. Farchi"],"v":"Proceedings of the 2025 Conference of the Nations of the Americas Chapter of the Association for Computational Linguistics: Human Language Technologies, NAACL 2025 - Volume 3: Industry Track","r":"A","x":"2409.04822","d":"https://doi.org/10.18653/v1/2025.naacl-industry.10","c":0,"th":"llm"},{"t":"Alignment Studio: Aligning Large Language Models to Particular Contextual Regulations","y":2024,"a":["S. Achintalwar","I. Baldini","D. Bouneffouf","…","E. Farchi","et al."],"v":"IEEE Internet Comput.","r":null,"x":"2403.09704","d":"https://doi.org/10.1109/MIC.2024.3453671","c":20,"th":"llm"},{"t":"A Chaos Recommendation Tool for Reliability Testing in Large-Scale Cloud-Native Systems","y":2024,"a":["M. Verma","S. Hans","D. Saha","…","E. Farchi","et al."],"v":"16th International Conference on COMmunication Systems \\& NETworkS, COMSNETS 2024","r":"National:India","x":null,"d":"https://doi.org/10.1109/COMSNETS59351.2024.10427311","c":0,"th":"found"},{"t":"A Novel Metric for Measuring the Robustness of Large Language Models in Non-adversarial Scenarios","y":2024,"a":["S. Ackerman","E. Rabinovich","E. Farchi","A. Anaby-Tavor"],"v":"Findings of the Association for Computational Linguistics: EMNLP 2024","r":"A*","x":"2408.01963","d":"https://doi.org/10.18653/v1/2024.findings-emnlp.158","c":10,"th":"llm"},{"t":"A Novel Double T-wise Approach to Root Cause Analysis via Combinatorial Test Set Completion","y":2024,"a":["A. C. M. Hicks","D. A. Furman","R. T. Rawlins","M. E. Gildein","E. Farchi"],"v":"IEEE International Conference on Software Testing","r":"A","x":null,"d":"https://doi.org/10.1109/ICSTW60967.2024.00045","c":0,"th":"ctd"},{"t":"Detectors for Safe and Reliable LLMs: Implementations, Uses, and Limitations","y":2024,"a":["S. Achintalwar","A. A. Garcia","A. Anaby-Tavor","…","E. Farchi","et al."],"v":"","r":null,"x":"2403.06009","d":null,"c":32,"th":"llm"},{"t":"Using Combinatorial Optimization to Design a High quality LLM Solution","y":2024,"a":["S. Ackerman","E. Farchi","R. Katan","O. Raz"],"v":"","r":null,"x":"2405.13020","d":null,"c":7,"th":"llm"},{"t":"Effective Technical Reviews","y":2024,"a":["S. Ballentine","E. Farchi"],"v":"","r":null,"x":"2407.02355","d":null,"c":0,"th":"found"},{"t":"Generating Unseen Code Tests In Infinitum","y":2024,"a":["M. Zalmanovici","O. Raz","E. Farchi","I. Freund"],"v":"","r":null,"x":"2407.19772","d":null,"c":0,"th":"llm"},{"t":"Can You Trust Your Metric? Automatic Concatenation-Based Tests for Metric Validity","y":2024,"a":["O. N. Fandina","L. Choshen","E. Farchi","G. Kour","Y. Perlitz","O. Raz"],"v":"","r":null,"x":"2408.12259","d":null,"c":0,"th":"llm"},{"t":"A Practical Approach to Combinatorial Test Design","y":2024,"a":["E. Farchi","D. Furman"],"v":"","r":null,"x":"2410.19522","d":null,"c":0,"th":"ctd"},{"t":"Automatic Generation of Benchmarks and Reliable LLM Judgment for Code Tasks","y":2024,"a":["E. Farchi","S. Froimovich","R. Katan","O. Raz"],"v":"","r":null,"x":"2410.21071","d":null,"c":17,"th":"llm"},{"t":"Deploying automated ticket router across the enterprise","y":2023,"a":["S. Ackerman","L. Alexander","M. Bennett","…","E. Farchi","et al."],"v":"AI Mag.","r":null,"x":null,"d":"https://doi.org/10.1002/aaai.12079","c":18,"th":"ml"},{"t":"Software testing in the machine learning era","y":2023,"a":["A. Stocco","O. Shehory","G. Jahangirova","…","E. Farchi","et al."],"v":"Empir. Softw. Eng.","r":null,"x":null,"d":"https://doi.org/10.1007/s10664-023-10326-7","c":0,"th":"ml"},{"t":"Generalized Coverage Criteria for Combinatorial Sequence Testing","y":2023,"a":["A. Elyasaf","E. Farchi","O. Margalit","G. Weiss","Y. Weiss"],"v":"IEEE Trans. Software Eng.","r":null,"x":null,"d":"https://doi.org/10.1109/TSE.2023.3279570","c":8,"th":"ctd"},{"t":"Convex Bounds on the Softmax Function with Applications to Robustness Verification","y":2023,"a":["D. Wei","H. Wu","M. Wu","P. Chen","C. W. Barrett","E. Farchi"],"v":"International Conference on Artificial Intelligence and Statistics, 25-27 April 2023, Palau de Congressos, Valencia, Spain","r":"A","x":"2303.01713","d":"https://proceedings.mlr.press/v206/wei23c.html","c":27,"th":"ml"},{"t":"Quality Engineering for Agile and DevOps on the Cloud and Edge","y":2023,"a":["E. Farchi","S. Route"],"v":"","r":null,"x":"2302.03651","d":null,"c":0,"th":"found"},{"t":"Automatic Generation of Attention Rules For Containment of Machine Learning Model Errors","y":2023,"a":["S. Ackerman","A. Bendavid","E. Farchi","O. Raz"],"v":"","r":null,"x":"2305.08115","d":null,"c":0,"th":"ml"},{"t":"Characterizing how 'distributional' NLP corpora distance metrics are","y":2023,"a":["S. Ackerman","G. Kour","E. Farchi"],"v":"","r":null,"x":"2310.14829","d":null,"c":0,"th":"llm"},{"t":"Data Drift Monitoring for Log Anomaly Detection Pipelines","y":2023,"a":["D. Wani","S. Ackerman","E. Farchi","X. Liu","H. Chang","S. Lalithsena"],"v":"","r":null,"x":"2310.14893","d":null,"c":0,"th":"ml"},{"t":"Predicting Question-Answering Performance of Large Language Models through Semantic Consistency","y":2023,"a":["E. Rabinovich","S. Ackerman","O. Raz","E. Farchi","A. Anaby-Tavor"],"v":"","r":null,"x":"2311.01152","d":null,"c":33,"th":"llm"},{"t":"Unveiling Safety Vulnerabilities of Large Language Models","y":2023,"a":["G. Kour","M. Zalmanovici","N. Zwerdling","…","E. Farchi","et al."],"v":"","r":null,"x":"2311.04124","d":null,"c":55,"th":"llm"},{"t":"Experiment Based Crafting and Analyzing of Machine Learning Solutions","y":2022,"a":["S. Ackerman","E. Farchi","O. Raz","O. Shehory"],"v":"","r":null,"x":"2201.00355","d":null,"c":0,"th":"ml"},{"t":"Combinatorial Sequence Testing Using Behavioral Programming and Generalized Coverage Criteria","y":2022,"a":["A. Elyasaf","E. Farchi","O. Margalit","G. Weiss","Y. Weiss"],"v":"","r":null,"x":"2201.00522","d":null,"c":0,"th":"ctd"},{"t":"High-quality Conversational Systems","y":2022,"a":["S. Ackerman","A. Anaby-Tavor","E. Farchi","et al."],"v":"","r":null,"x":"2204.13043","d":null,"c":0,"th":"llm"},{"t":"Using Fuzzy Matching of Queries to optimize Database workloads","y":2022,"a":["S. Singh","V. Kulkarni","M. Briggs","D. Mahajan","E. Farchi"],"v":"","r":null,"x":"2207.06820","d":null,"c":0,"th":"found"},{"t":"Random Test Generation of Application Programming Interfaces","y":2022,"a":["E. Farchi","K. Prakash","V. Sokhin"],"v":"","r":null,"x":"2207.13143","d":null,"c":0,"th":"found"},{"t":"Measuring the Measuring Tools: An Automatic Evaluation of Semantic Metrics for Text Corpora","y":2022,"a":["G. Kour","S. Ackerman","O. Raz","E. Farchi","B. Carmeli","A. Anaby-Tavor"],"v":"","r":null,"x":"2211.16259","d":null,"c":20,"th":"llm"},{"t":"Ranking Data Slices for ML Model Validation: A Shapley Value Approach","y":2021,"a":["E. Farchi","R. Narayanam","L. Nagalapatti"],"v":"37th IEEE International Conference on Data Engineering, ICDE 2021","r":"A*","x":null,"d":"https://doi.org/10.1109/ICDE51399.2021.00180","c":15,"th":"ml"},{"t":"Machine Learning Model Drift Detection Via Weak Data Slices","y":2021,"a":["S. Ackerman","P. Dube","E. Farchi","O. Raz","M. Zalmanovici"],"v":"3rd IEEE/ACM International Workshop on Deep Learning for Testing and Testing for Deep Learning","r":null,"x":"2108.05319","d":"https://doi.org/10.1109/DeepTest52559.2021.00007","c":36,"th":"ml"},{"t":"Broadly Applicable Targeted Data Sample Omission Attacks","y":2021,"a":["G. Barash","E. Farchi","S. Kraus","O. Shehory"],"v":"","r":null,"x":"2105.01560","d":null,"c":0,"th":"ml"},{"t":"Towards API Testing Across Cloud and Edge","y":2021,"a":["S. Ackerman","S. Choudhury","N. Desai","…","E. Farchi","et al."],"v":"","r":null,"x":"2109.02540","d":null,"c":0,"th":"found"},{"t":"Density-based interpretable hypercube region partitioning for mixed numeric and categorical data","y":2021,"a":["S. Ackerman","E. Farchi","O. Raz","M. Zalmanovici","M. Zohar"],"v":"","r":null,"x":"2110.05430","d":null,"c":17,"th":"ml"},{"t":"Detecting model drift using polynomial relations","y":2021,"a":["E. Roffe","S. Ackerman","O. Raz","E. Farchi"],"v":"","r":null,"x":"2110.12506","d":null,"c":0,"th":"ml"},{"t":"Using sequential drift detection to test the API economy","y":2021,"a":["S. Ackerman","P. Dube","E. Farchi"],"v":"","r":null,"x":"2111.05136","d":null,"c":0,"th":"ml"},{"t":"Sequential Drift Detection in Deep Learning Classifiers","y":2020,"a":["S. Ackerman","P. Dube","E. Farchi"],"v":"","r":null,"x":"2007.16109","d":null,"c":10,"th":"ml"},{"t":"Detection of data drift and outliers affecting machine learning model performance over time","y":2020,"a":["S. Ackerman","E. Farchi","O. Raz","M. Zalmanovici","P. Dube"],"v":"","r":null,"x":"2012.09258","d":null,"c":87,"th":"ml"},{"t":"Bridging the gap between ML solutions and their business requirements using feature interactions","y":2019,"a":["G. Barash","E. Farchi","I. Jayaraman","O. Raz","R. Tzoref-Brill","M. Zalmanovici"],"v":"Proceedings of the ACM Joint Meeting on European Software Engineering Conference and Symposium on the Foundations of Software Engineering, ESEC/SIGSOFT FSE 2019","r":"A*","x":null,"d":"https://doi.org/10.1145/3338906.3340442","c":30,"th":"ml"},{"t":"Defending via strategic ML selection","y":2019,"a":["E. Farchi","O. Shehory","G. Barash"],"v":"","r":null,"x":"1904.00737","d":null,"c":0,"th":"ml"},{"t":"Engineering Reliable Deep Learning Systems","y":2019,"a":["P. Santhanam","E. Farchi","V. Pankratius"],"v":"","r":null,"x":"1910.12582","d":null,"c":26,"th":"ml"},{"t":"A randomized algorithm for constructing cross-feature tests from single feature tests","y":2017,"a":["G. Barash","E. Farchi"],"v":"2017 IEEE International High Level Design Validation and Test Workshop, HLDVT 2017","r":"C","x":null,"d":"https://doi.org/10.1109/HLDVT.2017.8167456","c":0,"th":"ctd"},{"t":"A Composition-Based Method for Combinatorial Test Design","y":2017,"a":["A. Zamansky","A. Shwartz","S. Khoury","E. Farchi"],"v":"2017 IEEE International Conference on Software Testing","r":"A","x":null,"d":"https://doi.org/10.1109/ICSTW.2017.45","c":0,"th":"ctd"},{"t":"A Visual Logical Language for System Modelling in Combinatorial Test Design","y":2016,"a":["M. Spichkova","A. Zamansky","E. Farchi"],"v":"Advanced Information Systems Engineering Workshops - CAiSE 2016 International Workshops","r":"A","x":null,"d":"https://doi.org/10.1007/978-3-319-39564-7\\_12","c":0,"th":"ctd"},{"t":"Towards a Human-Centred Approach in Modelling and Testing of Cyber-Physical Systems","y":2015,"a":["M. Spichkova","A. Zamansky","E. Farchi"],"v":"21st IEEE International Conference on Parallel and Distributed Systems, ICPADS 2015","r":"B","x":"1601.06222","d":"https://doi.org/10.1109/ICPADS.2015.115","c":19,"th":"found"},{"t":"Special issue on testing, analysis and debugging of concurrent programs","y":2015,"a":["E. Farchi","R. M. Hierons","J. Louren\\cco"],"v":"Softw. Test. Verification Reliab.","r":null,"x":null,"d":"https://doi.org/10.1002/stvr.1577","c":0,"th":"conc"},{"t":"Helping the Tester Get It Right: Towards Supporting Agile Combinatorial Test Design","y":2015,"a":["A. Zamansky","E. Farchi"],"v":"Software Engineering and Formal Methods - SEFM 2015 Collocated Workshops: ATSE, HOFM","r":"B","x":null,"d":"https://doi.org/10.1007/978-3-662-49224-6\\_4","c":12,"th":"ctd"},{"t":"Exploring the Role of Logic and Formal Methods in Information Systems Education","y":2015,"a":["A. Zamansky","E. Farchi"],"v":"Software Engineering and Formal Methods - SEFM 2015 Collocated Workshops: ATSE, HOFM","r":"B","x":null,"d":"https://doi.org/10.1007/978-3-662-49224-6\\_7","c":9,"th":"found"},{"t":"Teaching Logic to Information Systems Students: Challenges and Opportunities","y":2015,"a":["A. Zamansky","E. Farchi"],"v":"","r":null,"x":"1507.03687","d":null,"c":12,"th":"found"},{"t":"Combinatorial Testing with Order Requirements","y":2014,"a":["E. Farchi","I. Segall","R. Tzoref-Brill","A. Zlotnick"],"v":"Seventh IEEE International Conference on Software Testing","r":"A","x":null,"d":"https://doi.org/10.1109/ICSTW.2014.13","c":22,"th":"ctd"},{"t":"Using Wiki as a Collaboration Platform for Software Requirements and Design","y":2014,"a":["I. Hadar","M. Levy","Y. Ben-Chaim","E. Farchi"],"v":"Knowledge","r":null,"x":null,"d":"https://doi.org/10.1007/978-3-319-27478-2\\_40","c":0,"th":"found"},{"t":"Using Projections to Debug Large Combinatorial Models","y":2013,"a":["E. Farchi","I. Segall","R. Tzoref-Brill"],"v":"Sixth IEEE International Conference on Software Testing","r":"A","x":null,"d":"https://doi.org/10.1109/ICSTW.2013.42","c":8,"th":"ctd"},{"t":"Using program closures to make an application programming interface (API) implementation thread safe","y":2012,"a":["E. Farchi","I. Segall","J. Louren\\cco","D. Sousa"],"v":"Proceedings of the 10th Workshop on Parallel and Distributed Systems: Testing","r":null,"x":null,"d":"https://doi.org/10.1145/2338967.2336810","c":0,"th":"conc"},{"t":"Using combinatorial benchmark construction to improve the assessment of concurrency bug detection tools","y":2012,"a":["J. S. Bradbury","I. Segall","E. Farchi","K. Jalbert","D. Kelk"],"v":"Proceedings of the 10th Workshop on Parallel and Distributed Systems: Testing","r":null,"x":null,"d":"https://doi.org/10.1145/2338967.2336812","c":8,"th":"ctd"},{"t":"The Study of Resource Allocation among Software Development Phases: An Economics-Based Approach","y":2011,"a":["P. Yiftachel","I. Hadar","D. Peled","E. Farchi","D. Goldwasser"],"v":"Adv. Softw. Eng.","r":null,"x":null,"d":"https://doi.org/10.1155/2011/579292","c":9,"th":"found"},{"t":"Practical verification of high-level dataraces in transactional memory programs","y":2011,"a":["V. Pessanha","R. J. Dias","J. Louren\\cco","E. Farchi","D. Sousa"],"v":"Proceedings of the 9th Workshop on Parallel and Distributed Systems: Testing","r":null,"x":null,"d":"https://doi.org/10.1145/2002962.2002968","c":8,"th":"conc"},{"t":"Using binary decision diagrams for combinatorial test design","y":2011,"a":["I. Segall","R. Tzoref-Brill","E. Farchi"],"v":"Proceedings of the 20th International Symposium on Software Testing and Analysis, ISSTA 2011","r":"A","x":null,"d":"https://doi.org/10.1145/2001420.2001451","c":114,"th":"ctd"},{"t":"Detection of deadlock potentials in multithreaded programs","y":2010,"a":["R. Agarwal","S. Bensalem","E. Farchi","et al."],"v":"IBM J. Res. Dev.","r":null,"x":null,"d":"https://doi.org/10.1147/JRD.2010.2060276","c":48,"th":"conc"},{"t":"Detection of Transactional Memory anomalies using static analysis","y":2010,"a":["B. C. Teixeira","J. Louren\\cco","E. Farchi","R. J. Dias","D. Sousa"],"v":"Proceedings of the 8th Workshop on Parallel and Distributed Systems: Testing","r":null,"x":null,"d":"https://doi.org/10.1145/1866210.1866213","c":14,"th":"conc"},{"t":"Unit testing for concurrent business code","y":2010,"a":["Y. Qi","Y. Nir-Buchbinder","E. Farchi","R. Das","Z. D. Luo","Z. Gan"],"v":"Proceedings of the 8th Workshop on Parallel and Distributed Systems: Testing","r":null,"x":null,"d":"https://doi.org/10.1145/1866210.1866214","c":0,"th":"conc"},{"t":"Engaging Stakeholders in Globally Distributed Software Development Processes","y":2010,"a":["Y. Ben-Chaim","M. Levy","I. Hadar","E. Farchi","A. Bronshtein"],"v":"The 5th Mediterranean Conference on Information Systems, MCIS 2010","r":null,"x":null,"d":"http://aisel.aisnet.org/mcis2010/14","c":0,"th":"found"},{"t":"Cross-Entropy-Based Replay of Concurrent Programs","y":2009,"a":["H. Chockler","E. Farchi","B. Godlin","S. Novikov"],"v":"Fundamental Approaches to Software Engineering, 12th International Conference, FASE 2009","r":"B","x":null,"d":"https://doi.org/10.1007/978-3-642-00593-0\\_14","c":9,"th":"conc"},{"t":"Automated substring hole analysis","y":2009,"a":["Y. Adler","E. Farchi","M. Klausner","et al."],"v":"31st International Conference on Software Engineering, ICSE 2009","r":"A*","x":null,"d":"https://doi.org/10.1109/ICSE-COMPANION.2009.5070982","c":0,"th":"found"},{"t":"Advanced code coverage analysis using substring holes","y":2009,"a":["Y. Adler","E. Farchi","M. Klausner","et al."],"v":"Proceedings of the Eighteenth International Symposium on Software Testing and Analysis, ISSTA 2009","r":"A","x":null,"d":"https://doi.org/10.1145/1572272.1572278","c":11,"th":"found"},{"t":"Forcing small models of conditions on program interleaving for detection of concurrent bugs","y":2009,"a":["E. Trainin","Y. Nir-Buchbinder","R. Tzoref-Brill","A. Zlotnick","S. Ur","E. Farchi"],"v":"Proceedings of the 7th Workshop on Parallel and Distributed Systems: Testing","r":null,"x":null,"d":"https://doi.org/10.1145/1639622.1639629","c":28,"th":"conc"},{"t":"SeeCode - A Code Review Plug-in for Eclipse","y":2008,"a":["M. Shochat","O. Raz","E. Farchi"],"v":"Hardware and Software: Verification and Testing, 4th International Haifa Verification Conference, HVC 2008","r":null,"x":null,"d":"https://doi.org/10.1007/978-3-642-01702-5\\_21","c":0,"th":"found"},{"t":"Selective Homeworkless Reviews","y":2008,"a":["E. Farchi","S. Ur"],"v":"First International Conference on Software Testing","r":"A","x":null,"d":"https://doi.org/10.1109/ICST.2008.17","c":0,"th":"found"},{"t":"Pitfalls in teaching development and testing of concurrent programs and how to overcome them","y":2008,"a":["E. Farchi"],"v":"Proceedings of the 6th Workshop on Parallel and Distributed Systems: Testing","r":null,"x":null,"d":"https://dl.acm.org/citation.cfm?id=1390852","c":0,"th":"conc"},{"t":"Distributed desk checking","y":2007,"a":["A. Hayardeny","S. Fienblit","E. Farchi"],"v":"Concurr. Comput. Pract. Exp.","r":null,"x":null,"d":"https://doi.org/10.1002/cpe.1067","c":0,"th":"found"},{"t":"Cross-Entropy Based Testing","y":2007,"a":["H. Chockler","E. Farchi","B. Godlin","S. Novikov"],"v":"Formal Methods in Computer-Aided Design, 7th International Conference, FMCAD 2007","r":"B","x":null,"d":"https://doi.org/10.1109/FAMCAD.2007.19","c":32,"th":"conc"},{"t":"The Advantages of Post-Link Code Coverage","y":2007,"a":["O. Raz","M. Klausner","N. Peleg","…","E. Farchi","et al."],"v":"Hardware and Software: Verification and Testing","r":null,"x":null,"d":"https://doi.org/10.1007/978-3-540-77966-7\\_19","c":0,"th":"found"},{"t":"Noise Makers Need to Know Where to be Silent - Producing Schedules That Find Bugs","y":2006,"a":["Y. Ben-Asher","E. Farchi","Y. Eytani","S. Ur"],"v":"Leveraging Applications of Formal Methods","r":"C","x":null,"d":"https://doi.org/10.1109/ISoLA.2006.18","c":25,"th":"conc"},{"t":"Formal verification of concurrent software: two case studies","y":2006,"a":["H. Chockler","E. Farchi","Z. Glazberg","B. Godlin","Y. Nir-Buchbinder","I. Rabinovitz"],"v":"Proceedings of the 4th Workshop on Parallel and Distributed Systems: Testing","r":null,"x":null,"d":"https://doi.org/10.1145/1147403.1147406","c":0,"th":"conc"},{"t":"Producing scheduling that causes concurrent programs to fail","y":2006,"a":["Y. Ben-Asher","Y. Eytani","E. Farchi","S. Ur"],"v":"Proceedings of the 4th Workshop on Parallel and Distributed Systems: Testing","r":null,"x":null,"d":"https://doi.org/10.1145/1147403.1147410","c":30,"th":"conc"},{"t":"Compact Representations of Search in Complex Domains","y":2005,"a":["Y. Ben-Asher","E. Farchi"],"v":"IGTR","r":null,"x":null,"d":"https://doi.org/10.1142/S0219198905000399","c":0,"th":"found"},{"t":"Effective Testing and Debugging Techniques for a Group Communication System","y":2005,"a":["E. Farchi","G. Kliot","Y. Krasny","A. Krits","R. Vitenberg"],"v":"2005 International Conference on Dependable Systems and Networks (DSN 2005), 28 June - 1 July 2005, Yokohama, Japan, Proceedings","r":"A","x":null,"d":"https://doi.org/10.1109/DSN.2005.41","c":8,"th":"conc"},{"t":"Assisting the Code Review Process Using Simple Pattern Recognition","y":2005,"a":["E. Farchi","B. R. Harrington"],"v":"Hardware and Software Verification and Testing","r":null,"x":null,"d":"https://doi.org/10.1007/11678779\\_8","c":11,"th":"found"},{"t":"Optimal Algorithmic Debugging and Reduced Coverage Using Search in Structured Domains","y":2005,"a":["Y. Ben-Asher","I. Breger","E. Farchi","I. Gordon"],"v":"Hardware and Software Verification and Testing","r":null,"x":null,"d":"https://doi.org/10.1007/11678779\\_11","c":0,"th":"found"},{"t":"Applications of synchronization coverage","y":2005,"a":["A. Bron","E. Farchi","Y. Magid","Y. Nir","S. Ur"],"v":"Proceedings of the ACM SIGPLAN Symposium on Principles and Practice of Parallel Programming, PPOPP 2005","r":"B","x":null,"d":"https://doi.org/10.1145/1065944.1065972","c":122,"th":"conc"},{"t":"Fidgeting to the Point of No Return","y":2004,"a":["M. Biberstein","E. Farchi","S. Ur"],"v":"18th International Parallel and Distributed Processing Symposium (IPDPS 2004), CD-ROM / Abstracts Proceedings, 26-30 April 2004, Santa Fe, New Mexico, USA","r":"A","x":null,"d":"https://doi.org/10.1109/IPDPS.2004.1303340","c":9,"th":"conc"},{"t":"Automatic Simulation of Network Problems in UDP-Based Java Programs","y":2004,"a":["E. Farchi","Y. Krasny","Y. Nir"],"v":"18th International Parallel and Distributed Processing Symposium (IPDPS 2004), CD-ROM / Abstracts Proceedings, 26-30 April 2004, Santa Fe, New Mexico, USA","r":"A","x":null,"d":"https://doi.org/10.1109/IPDPS.2004.1303342","c":14,"th":"conc"},{"t":"Concurrent and Distributed Desk Checking","y":2004,"a":["A. Hayardeny","S. Fienblit","E. Farchi"],"v":"18th International Parallel and Distributed Processing Symposium (IPDPS 2004), CD-ROM / Abstracts Proceedings, 26-30 April 2004, Santa Fe, New Mexico, USA","r":"A","x":null,"d":"https://doi.org/10.1109/IPDPS.2004.1303337","c":9,"th":"conc"},{"t":"Choosing among Alternative Pasts","y":2003,"a":["M. Biberstein","E. Farchi","S. Ur"],"v":"17th International Parallel and Distributed Processing Symposium (IPDPS 2003), 22-26 April 2003, Nice, France, CD-ROM/Abstracts Proceedings","r":"A","x":null,"d":"https://doi.org/10.1109/IPDPS.2003.1213516","c":12,"th":"conc"},{"t":"Framework for testing multi-threaded Java programs","y":2003,"a":["O. Edelstein","E. Farchi","E. Goldin","Y. Nir","G. Ratsaby","S. Ur"],"v":"Concurr. Comput. Pract. Exp.","r":null,"x":null,"d":"https://doi.org/10.1002/cpe.654","c":181,"th":"conc"},{"t":"Concurrent Bug Patterns and How to Test Them","y":2003,"a":["E. Farchi","Y. Nir","S. Ur"],"v":"17th International Parallel and Distributed Processing Symposium (IPDPS 2003), 22-26 April 2003, Nice, France, CD-ROM/Abstracts Proceedings","r":"A","x":null,"d":"https://doi.org/10.1109/IPDPS.2003.1213511","c":309,"th":"conc"},{"t":"Heuristics for Finding Concurrent Bug","y":2003,"a":["Y. Ben-Asher","E. Farchi","Y. Eytani"],"v":"17th International Parallel and Distributed Processing Symposium (IPDPS 2003), 22-26 April 2003, Nice, France, CD-ROM/Abstracts Proceedings","r":"A","x":null,"d":"https://doi.org/10.1109/IPDPS.2003.1213514","c":0,"th":"conc"},{"t":"Using a model-based test generator to test for standard conformance","y":2002,"a":["E. Farchi","A. Hartman","S. S. Pinter"],"v":"IBM Syst. J.","r":null,"x":null,"d":"https://doi.org/10.1147/sj.411.0089","c":164,"th":"found"},{"t":"Automatic query refinement using lexical affinities with maximal information gain","y":2002,"a":["D. Carmel","E. Farchi","Y. Petruschka","A. Soffer"],"v":"SIGIR 2002: Proceedings of the 25th Annual International ACM SIGIR Conference on Research and Development in Information Retrieval","r":"A*","x":null,"d":"https://doi.org/10.1145/564376.564427","c":0,"th":"found"},{"t":"Multithreaded Java program test generation","y":2001,"a":["O. Edelstein","E. Farchi","Y. Nir","G. Ratsaby","S. Ur"],"v":"Proceedings of the ACM 2001 Java Grande Conference","r":null,"x":null,"d":"http://portal.acm.org/citation.cfm?id=376656.376848","c":275,"th":"conc"},{"t":"Static Index Pruning for Information Retrieval Systems","y":2001,"a":["A. Soffer","D. Carmel","D. Cohen","…","E. Farchi","et al."],"v":"SIGIR 2001: Proceedings of the 24th Annual International ACM SIGIR Conference on Research and Development in Information Retrieval","r":"A*","x":null,"d":"https://doi.org/10.1145/383952.383958","c":312,"th":"found"},{"t":"Optimal Search in Trees","y":1999,"a":["Y. Ben-Asher","E. Farchi","I. Newman"],"v":"SIAM J. Comput.","r":null,"x":null,"d":"https://doi.org/10.1137/S009753979731858X","c":89,"th":"found"},{"t":"Optimal Search in Trees: Extended Abstract + Appendix","y":1997,"a":["Y. Ben-Asher","E. Farchi","I. Newman"],"v":"Proceedings of the Eighth Annual ACM-SIAM Symposium on Discrete Algorithms, 5-7 January 1997, New Orleans, Louisiana, USA","r":"A*","x":null,"d":"http://dl.acm.org/citation.cfm?id=314161.314433","c":0,"th":"found"},{"t":"Using true concurrency to model execution of parallel programs","y":1994,"a":["Y. Ben-Asher","E. Farchi"],"v":"Int. J. Parallel Program.","r":null,"x":null,"d":"https://doi.org/10.1007/BF02577738","c":0,"th":"conc"}];
+const EMAIL = "farchi@il.ibm.com";
+const THEMES = [
+  {id:"llm", name:"Evaluating and trusting LLMs", span:"2022–now",
+   text:"When an LLM is both the system and the evaluator, how do we validate either? I generate benchmarks with reliable LLM judgment for code tasks, study the validity of the metrics themselves, and meta-validate LLM-as-a-judge. Related work covers safety and alignment: aligning models to contextual regulations, detectors, prompt steerability, and automatic red-teaming.",
+   ongoing:"benchmarks for instruction following in code, LaajMeter for judging the judges, and analytic hints for evaluator blind spots."},
+  {id:"ml", name:"Quality engineering for ML systems", span:"2019–2023",
+   text:"Testing systems that have no deterministic specification. The work centers on data slices and drift: weak slices, Shapley-based slice ranking, attention rules that contain model errors, and a family of drift detectors. It also bridges ML solutions to business requirements and gives formal robustness bounds on the softmax function.",
+   ongoing:"the revised edition of the Springer textbook."},
+  {id:"ctd", name:"Combinatorial test design", span:"2011–now",
+   text:"Turning CTD from an algorithmic curiosity into an engineering discipline: BDD-based CTD for large constrained models, order requirements, generalized coverage for sequence testing, and double t-wise completion for root-cause analysis. Equally important is the human side, because the model, not the algorithm, is where testers fail.",
+   ongoing:"a practitioner-facing CTD methodology and LLM-assisted model creation."},
+  {id:"conc", name:"Concurrency testing and debugging", span:"1994–now",
+   text:"Treating concurrency bugs as testable rather than accidental. The bug-pattern taxonomy and the ConTest line of work showed that the interleaving space can be explored deliberately and measured, through noise injection, failure-forcing schedules, synchronization coverage, deadlock-potential detection, and cross-entropy replay.",
+   ongoing:"black-box bug amplification for multithreaded software."},
+  {id:"found", name:"Reviews, process, and foundations", span:"1997–now",
+   text:"The foundations under everything else: optimal search in trees, information retrieval, and model-based conformance testing. Also the human process of quality, including code reviews, desk checking, coverage analysis, and the economics of allocating effort across development phases.",
+   ongoing:"enhancing formal software specification with AI."}
+];
+const OPEN = ["2601.09745","2512.16272","2512.10713","2511.16383","2511.15733","2508.10161","2508.02827","2507.21318","2501.18243"];
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const themeName = id => (THEMES.find(t => t.id === id) || {}).name || "";
+const link = p => p.x ? "https://arxiv.org/abs/" + p.x : (p.d || "#");
+const authors = p => p.a.map(a => a.endsWith("Farchi") ? "<b>" + esc(a) + "</b>" : esc(a)).join(", ");
+PAPERS.forEach((p, i) => p.i = i);
+
+/* open preprints */
+const byArxiv = Object.fromEntries(PAPERS.filter(p => p.x).map(p => [p.x, p]));
+$("#preprints").innerHTML = OPEN.map(x => byArxiv[x]).filter(Boolean).map(p => `
+  <article class="pp">
+    <div class="pp-head"><span>arXiv:${esc(p.x)}</span><span class="status">Open for critique</span></div>
+    <h3><a href="${link(p)}" target="_blank" rel="noopener">${esc(p.t)}</a></h3>
+    <div class="pp-foot"><span class="tally">${esc(themeName(p.th))}${p.v ? " · also at " + esc(shortVenue(p.v)) : ""}</span><button class="btn" data-crit="${p.i}">Critique this paper</button></div>
+  </article>`).join("");
+
+function shortVenue(v){
+  const m = v.match(/\b(ASE|ICSE|ICST|NAACL|EMNLP|AISTATS|ICDE|ISSTA|IPDPS|SIGIR|SODA|TSE|DSN|FSE)\b/);
+  if (/Automated Software/.test(v)) return "ASE 2025";
+  return m ? m[1] : v.slice(0, 40);
+}
+
+/* threads */
+const counts = {}; PAPERS.forEach(p => counts[p.th] = (counts[p.th] || 0) + 1);
+$("#threadList").innerHTML = THEMES.map(t => {
+  const top = PAPERS.filter(p => p.th === t.id).sort((a, b) => b.c - a.c).slice(0, 3);
+  return `<div class="thread">
+    <h3>${esc(t.name)}</h3><span class="span">${t.span} · ${counts[t.id] || 0} papers</span>
+    <p>${esc(t.text)}</p>
+    <div class="ongoing"><b>Ongoing</b>${esc(t.ongoing)}</div>
+    <div class="key"><span>Most used:</span>${top.map(p => `<a href="${link(p)}" target="_blank" rel="noopener">${esc(p.t)}</a>`).join("")}</div>
+    <div class="key"><button class="linkbtn" data-theme-jump="${t.id}">See all ${counts[t.id] || 0} papers in this thread →</button></div>
+  </div>`;
+}).join("");
+
+/* ledger tabs */
+document.querySelectorAll(".tab").forEach(tab => tab.addEventListener("click", () => {
+  document.querySelectorAll(".tab").forEach(t => { t.setAttribute("aria-selected", t === tab); });
+  document.querySelectorAll(".panel").forEach(p => p.hidden = p.id !== tab.getAttribute("aria-controls"));
+}));
+
+/* archive */
+const state = { q: "", th: "all", sort: "year", arxiv: false, all: false };
+function store(k, v){ try { localStorage.setItem(k, v); } catch (e) {} }
+function load(k){ try { return localStorage.getItem(k); } catch (e) { return null; } }
+if (load("hideVenue") === "1") { $("#hideVenue").checked = true; $("#papers").classList.add("hide-venue"); }
+
+function renderChips(){
+  const list = [{id:"all", name:"All threads"}, ...THEMES];
+  $("#chips").innerHTML = list.map(t => `<button class="chip" data-th="${t.id}" aria-pressed="${state.th === t.id}">${esc(t.id === "all" ? t.name : t.name)}<span class="n">${t.id === "all" ? PAPERS.length : (counts[t.id] || 0)}</span></button>`).join("");
+}
+function render(){
+  const q = state.q.trim().toLowerCase();
+  let list = PAPERS.filter(p => (state.th === "all" || p.th === state.th)
+    && (!state.arxiv || p.x)
+    && (!q || p.t.toLowerCase().includes(q) || p.a.join(" ").toLowerCase().includes(q) || (p.v || "").toLowerCase().includes(q)));
+  list.sort(state.sort === "cites" ? (a, b) => b.c - a.c || b.y - a.y : (a, b) => b.y - a.y || b.c - a.c);
+  const total = list.length;
+  const limit = state.all || q || state.th !== "all" ? total : 25;
+  $("#count").textContent = `${total} paper${total === 1 ? "" : "s"}${limit < total ? ", showing " + limit : ""}`;
+  $("#moreBtn").hidden = limit >= total;
+  $("#paperList").innerHTML = list.slice(0, limit).map(p => `
+    <li class="paper">
+      <span class="yr">${p.y}</span>
+      <div style="min-width:0">
+        <div class="t"><a href="${link(p)}" target="_blank" rel="noopener">${esc(p.t)}</a></div>
+        <div class="au">${authors(p)}</div>
+        <div class="meta">
+          ${p.v ? `<span class="venue">${esc(p.v)}${p.r ? " · CORE " + esc(p.r) : ""}</span>` : `<span>Preprint</span>`}
+          ${p.x ? `<a href="https://arxiv.org/abs/${esc(p.x)}" target="_blank" rel="noopener">arXiv:${esc(p.x)}</a>` : ""}
+          ${p.x && p.d ? `<a class="venue" href="${esc(p.d)}" target="_blank" rel="noopener">publisher</a>` : ""}
+        </div>
+      </div>
+      <div class="side">
+        <span class="cites" title="Google Scholar citations">${p.c ? p.c.toLocaleString() + " cites" : "—"}</span>
+        <button class="linkbtn" data-crit="${p.i}">Critique</button>
+      </div>
+    </li>`).join("") || `<li class="paper"><span></span><div>No papers match. Try a shorter search or another thread.</div></li>`;
+  renderChips();
+}
+$("#q").addEventListener("input", e => { state.q = e.target.value; render(); });
+$("#sort").addEventListener("change", e => { state.sort = e.target.value; render(); });
+$("#arxivOnly").addEventListener("change", e => { state.arxiv = e.target.checked; render(); });
+$("#hideVenue").addEventListener("change", e => { $("#papers").classList.toggle("hide-venue", e.target.checked); store("hideVenue", e.target.checked ? "1" : "0"); });
+$("#moreBtn").addEventListener("click", () => { state.all = true; render(); });
+document.addEventListener("click", e => {
+  const chip = e.target.closest("[data-th]");
+  if (chip) { state.th = chip.dataset.th; render(); }
+  const jump = e.target.closest("[data-theme-jump]");
+  if (jump) { state.th = jump.dataset.themeJump; render(); document.getElementById("papers").scrollIntoView(); }
+  const c = e.target.closest("[data-crit]");
+  if (c) openCritique(PAPERS[+c.dataset.crit]);
+});
+render();
+
+/* critique dialog */
+const KINDS = ["Error or gap", "Missing related work", "Alternative explanation", "Replication attempt", "Full review"];
+let cur = null, kind = KINDS[0];
+function compose(){
+  const id = cur.x ? ` (arXiv:${cur.x})` : "";
+  const subject = `Critique: ${cur.t}${id}`;
+  const body =
+`Paper: ${cur.t}${id}
+Link: ${link(cur)}
+Type of comment: ${kind}
+Version I read:
+
+Claim or section in question:
+
+My comment:
+
+May this be posted in the public ledger on your home page?
+[ ] Yes, with my name   [ ] Yes, anonymously   [ ] No, private only
+`;
+  $("#dlgText").value = `To: ${EMAIL}\nSubject: ${subject}\n\n${body}`;
+  $("#dlgMail").href = `mailto:${EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+}
+function renderKinds(){
+  $("#kinds").innerHTML = KINDS.map(k => `<button type="button" class="chip" data-kind="${esc(k)}" aria-pressed="${k === kind}">${esc(k)}</button>`).join("");
+}
+$("#kinds").addEventListener("click", e => { const b = e.target.closest("[data-kind]"); if (!b) return; kind = b.dataset.kind; renderKinds(); compose(); });
+function openCritique(p){
+  cur = p; kind = KINDS[0];
+  $("#dlgPaper").textContent = p.t;
+  $("#dlgToast").textContent = "";
+  renderKinds(); compose();
+  const d = $("#dlg");
+  if (d.showModal) d.showModal(); else d.setAttribute("open", "");
+}
+function copy(text, toast, el){
+  const done = () => { toast.textContent = "Copied"; };
+  const fallback = () => { if (el && el.select) { el.focus(); el.select(); } toast.textContent = "Selected. Press Ctrl+C or ⌘C to copy."; };
+  try { navigator.clipboard.writeText(text).then(done, fallback); } catch (e) { fallback(); }
+}
+$("#dlgCopy").addEventListener("click", () => copy($("#dlgText").value, $("#dlgToast"), $("#dlgText")));
+$("#copyEmail").addEventListener("click", () => {
+  const t = $("#emailToast");
+  try { navigator.clipboard.writeText(EMAIL).then(() => t.textContent = "Copied", () => t.textContent = "Select the address to copy it"); }
+  catch (e) { t.textContent = "Select the address to copy it"; }
+});
+</script>
+</body>
+</html>
