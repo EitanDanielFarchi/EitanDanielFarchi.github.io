@@ -131,6 +131,13 @@ section h2{font-size:clamp(26px,3vw,32px);margin-bottom:14px}
 .ledger-wrap{overflow-x:auto}
 .ledger-table th{font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);font-weight:500;text-align:left;padding:0 12px 8px 0;border-bottom:1px solid var(--rule);white-space:nowrap}
 .ledger-table td.empty{padding:22px 0 4px;color:var(--ink-2)}
+.ledger-table td{padding:14px 14px 14px 0;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink-2)}
+.ledger-table td:first-child{font-family:var(--mono);font-size:12.5px;white-space:nowrap;color:var(--ink-3)}
+.ledger-table td.who{color:var(--ink);white-space:nowrap}
+.ledger-table td .sec{display:block;font-family:var(--mono);font-size:11.5px;color:var(--ink-3);margin-bottom:3px}
+.ledger-table tr:last-child td{border-bottom:0}
+.ledger-table{min-width:760px}
+.ledger-table td.empty{border-bottom:0}
 .empty b{color:var(--ink);font-weight:500;display:block;margin-bottom:4px;font-family:var(--display);font-size:18px}
 
 /* archive */
@@ -219,6 +226,7 @@ dialog::backdrop{background:rgba(10,16,15,.45)}
       <nav aria-label="Sections">
         <a href="#how-i-publish">How I publish</a>
         <a href="#open">Open for critique</a>
+        <a href="#ledger">Ledger</a>
         <a href="#threads">Research</a>
         <a href="#about">About</a>
         <a href="#contact">Contact</a>
@@ -271,7 +279,7 @@ dialog::backdrop{background:rgba(10,16,15,.45)}
       <div class="threads" id="threadList"></div>
     </section>
 
-    <section id="ledger" hidden>
+    <section id="ledger">
       <div class="eyebrow">The ledger</div>
       <h2>Critiques, errata, and reviews</h2>
       <p class="sub">The public record of how my papers have been tested by readers. Entries are added as they arrive, with the reader's permission.</p>
@@ -282,11 +290,11 @@ dialog::backdrop{background:rgba(10,16,15,.45)}
       </div>
       <div class="panel" role="tabpanel" id="pan-crit" aria-labelledby="tab-crit">
         <div class="ledger-wrap"><table class="ledger-table"><thead><tr><th>Date</th><th>Paper</th><th>Reader</th><th>Point raised</th><th>My response</th></tr></thead>
-        <tbody><tr><td class="empty" colspan="5"><b>No critiques posted yet.</b>Pick any paper on this page and press <em>Critique this paper</em>. The first one goes here.</td></tr></tbody></table></div>
+        <tbody><tr><td>Nov 2026</td><td><a href="https://www.researchgate.net/publication/417151447_Working_Effectively_with_AI_Three_Disciplines_of_Scope_and_Verification" target="_blank" rel="noopener"><i>Working Effectively with AI</i></a></td><td class="who">Orna Raz</td><td><span class="sec">A.1 · Section 1, calibrating capability</span>Hallucinations signal a weak context. Many invented facts usually mean the task is beyond what the model can do with its existing knowledge.</td><td>Adopted. Section 1 now treats frequent hallucination as a second signal, alongside thrashing, to stop and rescope the task. An isolated fabrication stays a matter for verification. The running example ties the silent dropping of specification sections to hallucination.</td></tr><tr><td>Nov 2026</td><td><a href="https://www.researchgate.net/publication/417151447_Working_Effectively_with_AI_Three_Disciplines_of_Scope_and_Verification" target="_blank" rel="noopener"><i>Working Effectively with AI</i></a></td><td class="who">Orna Raz</td><td><span class="sec">A.2 · Section 2, deciding how to verify</span>Letting the LLM both answer and test its own results enlarges what can be verified, when the task is well defined and the needed information is present. It does not replace human review of the most critical parts.</td><td>Adopted. A new paragraph in Section 2 covers model self-checking, its preconditions, and the objection that the model's tests share its blind spots. Correctness criteria written or validated by the human break that correlation: the human reviews the small invariant, and the AI generates the tests that exercise it. The example now states who proposed which invariant.</td></tr><tr><td>Nov 2026</td><td><a href="https://www.researchgate.net/publication/417151447_Working_Effectively_with_AI_Three_Disciplines_of_Scope_and_Verification" target="_blank" rel="noopener"><i>Working Effectively with AI</i></a></td><td class="who">Orna Raz</td><td><span class="sec">A.3 · Section 3, verifying critically</span>Ask the LLM for concise, minimal responses with a structure decided in advance, such as a summary table, so the real content is easier to verify.</td><td>Adopted. Section 2 now recommends concise answers with a fixed structure, such as one table row per requirement. Section 3 adds a caution: a summary is itself AI output and can hide omissions, so check it against the full artifact or use a structure that forces completeness.</td></tr><tr><td>Nov 2026</td><td><a href="https://www.researchgate.net/publication/417151447_Working_Effectively_with_AI_Three_Disciplines_of_Scope_and_Verification" target="_blank" rel="noopener"><i>Working Effectively with AI</i></a></td><td class="who">Orna Raz</td><td><span class="sec">A.4 · General, accountability</span>There is a large body of work on accountability. How can this methodology help prove due diligence?</td><td>Adopted. A new paragraph at the end of the Synthesis argues that the three disciplines leave a record of due diligence as a by-product of the work: scope decisions, a pre-committed plan, verification records, and stated limits. It connects this to internal algorithmic auditing and the NIST AI Risk Management Framework.</td></tr></tbody></table></div>
       </div>
       <div class="panel" role="tabpanel" id="pan-err" aria-labelledby="tab-err" hidden>
         <div class="ledger-wrap"><table class="ledger-table"><thead><tr><th>Date</th><th>Paper</th><th>Version</th><th>What changed</th><th>Credited to</th></tr></thead>
-        <tbody><tr><td class="empty" colspan="5"><b>No errata recorded yet.</b>Corrections found by readers will be logged here with the revised version that fixes them.</td></tr></tbody></table></div>
+        <tbody><tr><td>Nov 2026</td><td><a href="https://www.researchgate.net/publication/417151447_Working_Effectively_with_AI_Three_Disciplines_of_Scope_and_Verification" target="_blank" rel="noopener"><i>Working Effectively with AI</i></a></td><td>Revised draft</td><td>Four additions in response to reader comments: hallucination as a calibration signal (Section 1); model self-checking with human-owned correctness criteria, and concise, structured responses (Section 2); a caution that summaries can hide omissions (Section 3); and a paragraph on accountability and due diligence (Synthesis).</td><td class="who">Orna Raz</td></tr></tbody></table></div>
       </div>
       <div class="panel" role="tabpanel" id="pan-rev" aria-labelledby="tab-rev" hidden>
         <div class="ledger-wrap"><table class="ledger-table"><thead><tr><th>Date</th><th>Paper reviewed</th><th>Authors</th><th>Review</th></tr></thead>
@@ -412,6 +420,7 @@ const THEMES = [
    text:"The foundations under everything else: optimal search in trees, information retrieval, and model-based conformance testing. Also the human process of quality, including code reviews, desk checking, coverage analysis, and the economics of allocating effort across development phases.",
    ongoing:"enhancing formal software specification with AI."}
 ];
+const CRITIQUED = {"rg417151447": "Revised after reader critique"};
 const OPEN = ["rg417151447","2609.07365","2606.06325","2601.09745","2512.16272","2512.10713","2511.16383","2511.15733","2508.10161","2508.02827","2507.21318","2501.18243"];
 
 const $ = s => document.querySelector(s);
@@ -429,7 +438,7 @@ $("#preprints").innerHTML = OPEN.map(x => byArxiv[x]).filter(Boolean).map(p => `
   <article class="pp">
     <div class="pp-head"><span>${p.x ? "arXiv:" + esc(p.x) : "Preprint · " + p.y}</span><span class="status">Open for critique</span></div>
     <h3><a href="${link(p)}" target="_blank" rel="noopener">${esc(p.t)}</a></h3>
-    <div class="pp-foot"><span class="tally">${citeLabel(p)}${p.v ? " · also at " + esc(shortVenue(p.v)) : ""}</span><button class="btn" data-crit="${p.i}">Critique this paper</button></div>
+    <div class="pp-foot"><span class="tally">${citeLabel(p)}${p.v ? " · also at " + esc(shortVenue(p.v)) : ""}${CRITIQUED[p.x || p.k] ? ` · <a href="#ledger">${CRITIQUED[p.x || p.k]}</a>` : ""}</span><button class="btn" data-crit="${p.i}">Critique this paper</button></div>
   </article>`).join("");
 
 function shortVenue(v){
